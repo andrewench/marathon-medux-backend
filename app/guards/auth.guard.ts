@@ -5,9 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { Request } from 'express'
 
-import { Constants } from '@/constants'
+import { extractTokenFromCookie } from '@/utils'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,7 +14,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-    const token = this.extractTokenFromCookie(request)
+    const token = extractTokenFromCookie(request)
 
     if (!token) throw new UnauthorizedException()
 
@@ -30,25 +29,5 @@ export class AuthGuard implements CanActivate {
     }
 
     return true
-  }
-
-  private extractTokenFromCookie(request: Request): string | undefined {
-    const cookie = request.headers.cookie
-
-    const cookiesList = cookie.split(/;\s*/)
-
-    let accessToken: string | undefined
-
-    const tokenPatternPrefix = new RegExp(
-      `${Constants.ACCESS_TOKEN_PREFIX}=\\w+`,
-    )
-
-    cookiesList.forEach(token => {
-      if (token.search(tokenPatternPrefix) !== -1) {
-        accessToken = token.split('=')[1]
-      }
-    })
-
-    return accessToken
   }
 }

@@ -8,9 +8,10 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  fullName String @map("full_name")
+  id       Int     @id @default(autoincrement())
+  fullName String  @map("full_name")
   login    String
   email    String
   password String
+  role     String? @default("pacient")
 }
