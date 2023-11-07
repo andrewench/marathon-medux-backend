@@ -1,0 +1,7 @@
+export const Constants = {
+  ACCESS_TOKEN_PREFIX: 'at',
+  ACCESS_TOKEN_LIFE_TIME: 60 * 2,
+
+  REFRESH_TOKEN_PREFIX: 'rt',
+  REFRESH_TOKEN_LIFE_TIME: 60 * 8,
+}
