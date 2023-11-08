@@ -5,6 +5,8 @@ export const Constants = {
 
     REFRESH_TOKEN_PREFIX: 'rt',
     REFRESH_TOKEN_LIFE_TIME: 60 * 8,
+
+    EXPIRED_DATE: 'Thu, 01 Jan 1970 00:00:00 GMT',
   },
 
   response: {

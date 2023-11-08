@@ -1,3 +1,5 @@
+import { UnauthorizedException } from '@nestjs/common'
+
 import { Constants } from '@/constants'
 
 import { IExtractTokenFromCookie } from './extract-token-from-cookie.interface'
@@ -7,6 +9,8 @@ export const extractTokenFromCookie = ({
   type,
 }: IExtractTokenFromCookie): string | undefined => {
   const cookie = request.headers.cookie
+
+  if (!cookie) throw new UnauthorizedException()
 
   const cookiesList = cookie.split(/;\s*/)
 

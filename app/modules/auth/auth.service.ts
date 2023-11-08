@@ -22,7 +22,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async login({ login, password }: AuthUserDto, res: Response) {
+  async login({ login, password }: AuthUserDto, response: Response) {
     const user = await this.prisma.user.findFirst({
       where: {
         login,
@@ -50,9 +50,9 @@ export class AuthService {
     })
 
     const { accessTokenCookieHeader, refreshTokenCookieHeader } =
-      await TokenService.generateHeaders()
+      TokenService.generateHeaders()
 
-    return res
+    return response
       .status(200)
       .setHeader('Set-Cookie', [
         accessTokenCookieHeader,
@@ -63,7 +63,7 @@ export class AuthService {
 
   async signUp(
     { firstName, lastName, login, email, password }: CreateUserDto,
-    res: Response,
+    response: Response,
   ) {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -101,9 +101,9 @@ export class AuthService {
     })
 
     const { accessTokenCookieHeader, refreshTokenCookieHeader } =
-      await TokenService.generateHeaders()
+      TokenService.generateHeaders()
 
-    return res
+    return response
       .status(200)
       .setHeader('Set-Cookie', [
         accessTokenCookieHeader,
@@ -129,13 +129,26 @@ export class AuthService {
     })
 
     const { accessTokenCookieHeader, refreshTokenCookieHeader } =
-      await TokenService.generateHeaders()
+      TokenService.generateHeaders()
 
     return response
       .status(200)
       .setHeader('Set-Cookie', [
         accessTokenCookieHeader,
         refreshTokenCookieHeader,
+      ])
+      .json({})
+  }
+
+  async logout(response: Response) {
+    const { accessTokenExpiredHeader, refreshTokenExpiredHeader } =
+      TokenService.generateExpiredHeaders()
+
+    return response
+      .status(200)
+      .setHeader('Set-Cookie', [
+        accessTokenExpiredHeader,
+        refreshTokenExpiredHeader,
       ])
       .json({})
   }
