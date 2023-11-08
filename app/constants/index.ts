@@ -10,6 +10,7 @@ export const Constants = {
   response: {
     USER_NOT_FOUND: `The user doesn't exist`,
     INVALID_CREDENTIALS: 'Invalid login or password',
+    USER_ALREADY_EXIST: 'User already exist',
   },
 
   user: {

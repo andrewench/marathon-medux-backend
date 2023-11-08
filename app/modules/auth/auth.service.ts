@@ -13,6 +13,7 @@ import { Constants } from '@/constants'
 import { excludeUnsafeFields } from '@/utils'
 
 import { AuthUserDto } from './dto/auth-user.dto'
+import { CreateUserDto } from './dto/create-user.dto'
 
 @Injectable()
 export class AuthService {
@@ -56,5 +57,56 @@ export class AuthService {
         refreshTokenCookieHeader,
       ])
       .json(excludeUnsafeFields(user, ['password']))
+  }
+
+  async signUp(
+    { firstName, lastName, login, email, password }: CreateUserDto,
+    res: Response,
+  ) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            login,
+          },
+          {
+            email,
+          },
+        ],
+      },
+    })
+
+    if (user)
+      throw new ForbiddenException(Constants.response.USER_ALREADY_EXIST, {
+        description: 'USER_ALREADY_EXIST',
+      })
+
+    const hashedPassword = await CryptoService.encrypt(password)
+
+    const createdUser = await this.prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        login,
+        email,
+        password: hashedPassword,
+      },
+    })
+
+    await TokenService.generateTokens(this.jwtService, {
+      userId: createdUser.id,
+      role: Constants.user.DEFAULT_ROLE,
+    })
+
+    const { accessTokenCookieHeader, refreshTokenCookieHeader } =
+      await TokenService.generateHeaders()
+
+    return res
+      .status(200)
+      .setHeader('Set-Cookie', [
+        accessTokenCookieHeader,
+        refreshTokenCookieHeader,
+      ])
+      .json(excludeUnsafeFields(createdUser, ['password']))
   }
 }

@@ -6,6 +6,11 @@ export class TokenService {
   protected static accessToken: string
   protected static refreshToken: string
 
+  protected static accessTokenLifeTime: number =
+    Constants.tokens.ACCESS_TOKEN_LIFE_TIME
+  protected static refreshTokenLifeTime: number =
+    Constants.tokens.REFRESH_TOKEN_LIFE_TIME
+
   static async generateTokens(jwt: JwtService, payload: Record<string, any>) {
     this.accessToken = await jwt.signAsync(payload, {
       expiresIn: Constants.tokens.ACCESS_TOKEN_LIFE_TIME,
@@ -21,11 +26,9 @@ export class TokenService {
   protected static async createCookieHeader({
     type,
     path,
-    expires,
   }: {
     type: 'accessToken' | 'refreshToken'
     path: string
-    expires: number
   }): Promise<string> {
     const { ACCESS_TOKEN_PREFIX, REFRESH_TOKEN_PREFIX } = Constants.tokens
 
@@ -34,29 +37,30 @@ export class TokenService {
       refreshToken: REFRESH_TOKEN_PREFIX,
     }
 
-    const attributes: string[] = [
+    const lifeTime = {
+      accessToken: this.accessTokenLifeTime,
+      refreshToken: this.refreshTokenLifeTime,
+    }
+
+    const payload: string[] = [
       `${prefix[type]}=${this[type]};`,
       `path=${path};`,
-      `expires=${new Date(Date.now() + expires)};`,
+      `expires=${new Date(Date.now() + lifeTime[type])};`,
       `httpOnly=true`,
     ]
 
-    return attributes.join(' ')
+    return payload.join(' ')
   }
 
   public static async generateHeaders() {
-    const { ACCESS_TOKEN_LIFE_TIME, REFRESH_TOKEN_LIFE_TIME } = Constants.tokens
-
     const accessTokenCookieHeader = await this.createCookieHeader({
       type: 'accessToken',
       path: '/',
-      expires: ACCESS_TOKEN_LIFE_TIME,
     })
 
     const refreshTokenCookieHeader = await this.createCookieHeader({
       type: 'refreshToken',
       path: '/',
-      expires: REFRESH_TOKEN_LIFE_TIME,
     })
 
     return {
