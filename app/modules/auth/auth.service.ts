@@ -40,7 +40,9 @@ export class AuthService {
     )
 
     if (!isVerifiedPassword)
-      throw new ForbiddenException(Constants.response.INVALID_CREDENTIALS)
+      throw new ForbiddenException(Constants.response.INVALID_CREDENTIALS, {
+        description: 'INVALID_CREDENTIALS',
+      })
 
     await TokenService.generateTokens(this.jwtService, {
       id: user.id,
@@ -135,8 +137,6 @@ export class AuthService {
         accessTokenCookieHeader,
         refreshTokenCookieHeader,
       ])
-      .json({
-        isRefreshed: true,
-      })
+      .json({})
   }
 }
