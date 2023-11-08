@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Put, Res, UsePipes } from '@nestjs/common'
-import { Response } from 'express'
+import { Body, Controller, Post, Put, Req, Res, UsePipes } from '@nestjs/common'
+import { Request, Response } from 'express'
 
 import { AuthUserDto } from './dto/auth-user.dto'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -20,5 +20,10 @@ export class AuthController {
   @Put('/signup')
   async signUp(@Body() credentials: CreateUserDto, @Res() res: Response) {
     return this.authService.signUp(credentials, res)
+  }
+
+  @Post('/refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    return this.authService.refresh(req, res)
   }
 }

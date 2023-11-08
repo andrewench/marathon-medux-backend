@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 
 import { CryptoService, PrismaService, TokenService } from '@/services'
 
 import { Constants } from '@/constants'
 
-import { excludeUnsafeFields } from '@/utils'
+import { excludeUnsafeFields, extractTokenFromCookie } from '@/utils'
 
 import { AuthUserDto } from './dto/auth-user.dto'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -44,7 +44,7 @@ export class AuthService {
 
     await TokenService.generateTokens(this.jwtService, {
       id: user.id,
-      role: Constants.user.DEFAULT_ROLE,
+      role: user.role,
     })
 
     const { accessTokenCookieHeader, refreshTokenCookieHeader } =
@@ -108,5 +108,35 @@ export class AuthService {
         refreshTokenCookieHeader,
       ])
       .json(excludeUnsafeFields(createdUser, ['password']))
+  }
+
+  async refresh(request: Request, response: Response) {
+    const refreshToken = extractTokenFromCookie({
+      request,
+      type: 'refreshToken',
+    })
+
+    const { userId, role } = await this.jwtService.verifyAsync(refreshToken, {
+      secret: process.env.RT_SECRET_KEY,
+      ignoreExpiration: true,
+    })
+
+    await TokenService.generateTokens(this.jwtService, {
+      userId,
+      role,
+    })
+
+    const { accessTokenCookieHeader, refreshTokenCookieHeader } =
+      await TokenService.generateHeaders()
+
+    return response
+      .status(200)
+      .setHeader('Set-Cookie', [
+        accessTokenCookieHeader,
+        refreshTokenCookieHeader,
+      ])
+      .json({
+        isRefreshed: true,
+      })
   }
 }

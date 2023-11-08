@@ -45,7 +45,7 @@ export class TokenService {
     const payload: string[] = [
       `${prefix[type]}=${this[type]};`,
       `path=${path};`,
-      `expires=${new Date(Date.now() + lifeTime[type])};`,
+      `expires=${new Date(Date.now() + 1000 * lifeTime[type])};`,
       `httpOnly=true`,
     ]
 
