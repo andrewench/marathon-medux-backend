@@ -14,5 +14,5 @@ model User {
   login     String
   email     String
   password  String
-  role      String? @default("pacient")
+  role      String? @default("patient")
 }

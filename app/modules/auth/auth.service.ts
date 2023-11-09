@@ -45,7 +45,7 @@ export class AuthService {
       })
 
     await TokenService.generateTokens(this.jwtService, {
-      id: user.id,
+      userId: user.id,
       role: user.role,
     })
 
