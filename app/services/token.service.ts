@@ -18,7 +18,7 @@ export class TokenService {
   protected static accessTokenLifeTime: number = ACCESS_TOKEN_LIFE_TIME
   protected static refreshTokenLifeTime: number = REFRESH_TOKEN_LIFE_TIME
 
-  protected static readonly prefixList = {
+  protected static prefixList = {
     accessToken: ACCESS_TOKEN_PREFIX,
     refreshToken: REFRESH_TOKEN_PREFIX,
   }
@@ -45,20 +45,13 @@ export class TokenService {
     type: TTokenType
     path: string
   }): string {
-    const { ACCESS_TOKEN_PREFIX, REFRESH_TOKEN_PREFIX } = Constants.tokens
-
-    const prefix = {
-      accessToken: ACCESS_TOKEN_PREFIX,
-      refreshToken: REFRESH_TOKEN_PREFIX,
-    }
-
     const lifeTime = {
       accessToken: this.accessTokenLifeTime,
       refreshToken: this.refreshTokenLifeTime,
     }
 
     const payload: string[] = [
-      `${prefix[type]}=${this[type]};`,
+      `${this.prefixList[type]}=${this[type]};`,
       `path=${path};`,
       `expires=${new Date(Date.now() + 1000 * lifeTime[type])};`,
       `httpOnly=true`,
@@ -73,7 +66,15 @@ export class TokenService {
   }: {
     type: TTokenType
   }): string {
-    return `${this.prefixList[type]}=; path=/; expires=${Constants.tokens.EXPIRED_DATE}; httpOnly=true; domain=${process.env.DOMAIN_NAME}`
+    const payload = [
+      `${this.prefixList[type]}=;`,
+      'path=/;',
+      `expires=${Constants.tokens.EXPIRED_DATE};`,
+      'httpOnly=true;',
+      `domain=${process.env.DOMAIN_NAME}`,
+    ]
+
+    return payload.join(' ').trim()
   }
 
   public static generateHeaders() {

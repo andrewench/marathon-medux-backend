@@ -16,11 +16,11 @@ export class UserService {
   ) {}
 
   async getProfile(request: Request) {
-    const { id, role } = request['user'] as TJwtPayload
+    const { userId, role } = request['user'] as TJwtPayload
 
     const user = await this.prisma.user.findFirst({
       where: {
-        id,
+        id: userId,
         role,
       },
     })
