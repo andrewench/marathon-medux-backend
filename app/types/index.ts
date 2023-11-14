@@ -1,7 +1,7 @@
 export type TTokenType = 'accessToken' | 'refreshToken'
 
 export type TJwtPayload = {
-  userId: number
+  userId: string
   role: string
   iat: number
   exp: number

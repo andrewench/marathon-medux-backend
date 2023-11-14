@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request, Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
 
 import { CryptoService, PrismaService, TokenService } from '@/services'
 
@@ -45,7 +46,7 @@ export class AuthService {
       })
 
     await TokenService.generateTokens(this.jwtService, {
-      userId: user.id,
+      userId: user.publicId,
       role: user.role,
     })
 
@@ -85,8 +86,11 @@ export class AuthService {
 
     const hashedPassword = await CryptoService.encrypt(password)
 
+    const hashedId = uuidv4()
+
     const createdUser = await this.prisma.user.create({
       data: {
+        publicId: hashedId,
         firstName,
         lastName,
         login,
@@ -96,7 +100,7 @@ export class AuthService {
     })
 
     await TokenService.generateTokens(this.jwtService, {
-      userId: createdUser.id,
+      userId: createdUser.publicId,
       role: Constants.user.DEFAULT_ROLE,
     })
 

@@ -20,7 +20,7 @@ export class UserService {
 
     const user = await this.prisma.user.findFirst({
       where: {
-        id: userId,
+        publicId: userId,
         role,
       },
     })
