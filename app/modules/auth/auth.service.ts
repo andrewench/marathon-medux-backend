@@ -59,7 +59,7 @@ export class AuthService {
         accessTokenCookieHeader,
         refreshTokenCookieHeader,
       ])
-      .json(excludeUnsafeFields(user, ['password']))
+      .json(excludeUnsafeFields(user, ['publicId', 'password']))
   }
 
   async signUp(
@@ -113,7 +113,7 @@ export class AuthService {
         accessTokenCookieHeader,
         refreshTokenCookieHeader,
       ])
-      .json(excludeUnsafeFields(createdUser, ['password']))
+      .json(excludeUnsafeFields(createdUser, ['publicId', 'password']))
   }
 
   async refresh(request: Request, response: Response) {

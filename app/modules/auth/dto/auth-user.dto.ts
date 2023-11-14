@@ -1,15 +1,32 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator'
+
+import { Constants } from '@/constants'
+
+const { patterns } = Constants
 
 export class AuthUserDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(6)
-  @MaxLength(24)
+  @MaxLength(16)
+  @Matches(patterns.LOGIN_PATTERN, {
+    message:
+      'login must contain only alphanumeric characters, _ and start with a letter',
+  })
   login: string
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
   @MaxLength(32)
+  @Matches(patterns.PASSWORD_PATTERN, {
+    message:
+      'password must contain special characters: #?!@$%^&* - and it have a length of at least 8 characters',
+  })
   password: string
 }

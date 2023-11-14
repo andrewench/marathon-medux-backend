@@ -18,4 +18,14 @@ export const Constants = {
   user: {
     DEFAULT_ROLE: 'patient',
   },
+
+  patterns: {
+    FIRST_NAME_PATTERN: /\b[^0-9^\s]{2,28}\b/,
+    LAST_NAME_PATTERN: /\b[^0-9^\s]{3,30}\b/,
+    LOGIN_PATTERN: /^[a-z][\w\\_?\d*]+$/,
+    EMAIL_PATTERN:
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    PASSWORD_PATTERN:
+      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/,
+  },
 }
